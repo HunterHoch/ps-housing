@@ -39,14 +39,20 @@ function InitialiseProperties(properties)
     Debug("Initialised properties")
     loaded = true
 end
-AddEventHandler("QBCore:Client:OnPlayerLoaded", InitialiseProperties)
+
+-- AddEventHandler("QBCore:Client:OnPlayerLoaded", InitialiseProperties)
+
+RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
+    InitialiseProperties()
+end)
+
 RegisterNetEvent('ps-housing:client:initialiseProperties', InitialiseProperties)
 
--- AddEventHandler("onResourceStart", function(resourceName) -- Used for when the resource is restarted while in game
--- 	if (GetCurrentResourceName() == resourceName) then
---         InitialiseProperties()
--- 	end
--- end)
+AddEventHandler("onResourceStart", function(resourceName) -- Used for when the resource is restarted while in game
+	if (GetCurrentResourceName() == resourceName) then
+        InitialiseProperties()
+	end
+end)
 
 if GetResourceState('qbx_properties') == 'started' then
     local data = {}

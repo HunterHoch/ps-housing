@@ -57,7 +57,7 @@ MySQL.ready(function()
     end)
 end)
 
-lib.callback.register("ps-housing:server:requestProperties", function()
+lib.callback.register('ps-housing:server:requestProperties', function()
     while not dbloaded do
         Wait(100)
     end

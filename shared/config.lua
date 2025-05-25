@@ -1621,7 +1621,7 @@ Config.Furnitures = {
 }
 
 Config.IllicitFurniture = {
-    { item = "drug_brick", object = "bkr_prop_weed_bigbag_02a", label = "Drug Package" },
+    { item = "coke_brick", object = "bkr_prop_weed_bigbag_02a", label = "Drug Package" },
     { item = "meth_table", object = "bkr_prop_meth_table_01a", label = "Meth Table" }
 }
 

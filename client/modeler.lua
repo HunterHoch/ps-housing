@@ -147,9 +147,28 @@ Modeler = {
             data = true
         })
 
+        local furnitures = json.decode(json.encode(Config.Furnitures))
+        local illicit = { category = 'Illicit', items = {} }
+
+        for _, v in ipairs(Config.IllicitFurniture or {}) do
+            if lib.callback.await('ps-housing:cb:playerHasItem', false, v.item) then
+                illicit.items[#illicit.items + 1] = {
+                    object = v.object,
+                    price = 0,
+                    label = v.label,
+                    type = v.type,
+                    requiredItem = v.item
+                }
+            end
+        end
+
+        if #illicit.items > 0 then
+            furnitures[#furnitures + 1] = illicit
+        end
+
         SendNUIMessage({
-            action = "setFurnituresData",
-            data = Config.Furnitures
+            action = 'setFurnituresData',
+            data = furnitures
         })
 
         -- Owned furniture is set by the Property class
@@ -413,6 +432,7 @@ Modeler = {
             position = GetEntityCoords(self.CurrentObject),
             rotation = GetEntityRotation(self.CurrentObject),
             type = data.type,
+            requiredItem = data.requiredItem,
         }
 
         self.Cart[self.CurrentObject] = item
@@ -503,6 +523,7 @@ Modeler = {
                 position = offsetPos,
                 rotation = v.rotation,
                 type = v.type,
+                requiredItem = v.requiredItem,
             }
         end
 

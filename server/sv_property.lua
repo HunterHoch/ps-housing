@@ -161,7 +161,9 @@ function Property:UpdateFurnitures(furnitures, isGarden)
             object = furnitures[i].object,
             position = furnitures[i].position,
             rotation = furnitures[i].rotation,
-            type = furnitures[i].type
+            type = furnitures[i].type,
+            requiredItem = furnitures[i].requiredItem,
+            metadata = furnitures[i].metadata
         }
     end
 
@@ -800,15 +802,38 @@ RegisterNetEvent("ps-housing:server:buyFurniture", function(property_id, items, 
 
     for i = 1, #items do
         local item = items[i]
+
+        if item.requiredItem then
+            if Config.Inventory == 'ox' then
+                local slot = exports.ox_inventory:Search(src, 'slots', item.requiredItem)[1]
+                if not slot then
+                    Framework[Config.Notify].Notify(src, 'Missing item', 'error')
+                    return
+                end
+                exports.ox_inventory:RemoveItem(src, item.requiredItem, 1, slot.metadata)
+                item.metadata = slot.metadata
+            else
+                local pItem = Player.Functions.GetItemByName(item.requiredItem)
+                if not pItem then
+                    Framework[Config.Notify].Notify(src, 'Missing item', 'error')
+                    return
+                end
+                Player.Functions.RemoveItem(item.requiredItem, 1, pItem.slot)
+                item.metadata = pItem.info
+            end
+            item.price = 0
+        end
+
         if item.type == 'storage' then
             local stashName = ("property_%s"):format(propertyData.property_id)
             local stashConfig = Config.Shells[propertyData.shell].stash
             if not propertyData.apartment then
                 Framework[Config.Inventory].RegisterInventory(firstStorage and stashName or stashName .. item.id, 'Property: ' .. propertyData.street .. '#' .. propertyData.property_id, stashConfig)
-            else 
-               Framework[Config.Inventory].RegisterInventory(firstStorage and stashName or stashName .. item.id, 'Property: ' .. propertyData.apartment .. '#' .. propertyData.property_id, stashConfig)
+            else
+                Framework[Config.Inventory].RegisterInventory(firstStorage and stashName or stashName .. item.id, 'Property: ' .. propertyData.apartment .. '#' .. propertyData.property_id, stashConfig)
             end
         end
+
         numFurnitures = numFurnitures + 1
         propertyData.furnitures[numFurnitures] = item
     end
@@ -849,6 +874,14 @@ RegisterNetEvent("ps-housing:server:removeFurniture", function(property_id, item
     for k, v in ipairs(currentFurnitures) do
         if v.id == itemid then
             table.remove(currentFurnitures, k)
+            if v.requiredItem then
+                if Config.Inventory == 'ox' then
+                    exports.ox_inventory:AddItem(src, v.requiredItem, 1, v.metadata)
+                else
+                    local Player = GetPlayer(src)
+                    Player.Functions.AddItem(v.requiredItem, 1, false, v.metadata)
+                end
+            end
             break
         end
     end

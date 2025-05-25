@@ -1,6 +1,6 @@
 DoorResource = GetResourceState('ox_doorlock') == 'started' and 'ox' or GetResourceState('qb-doorlock') == 'started' and 'qb'
-if not DoorResource then 
-    return error('ox_doorlock/qb-doorlock must be started before ps-housing.') 
+if not DoorResource then
+    return error('ox_doorlock/qb-doorlock must be started before ps-housing.')
 end
 
 QBCore = exports['qb-core']:GetCoreObject()
@@ -63,6 +63,14 @@ lib.callback.register("ps-housing:server:requestProperties", function()
     end
 
     return PropertiesTable
+end)
+
+RegisterNetEvent('ps-housing:server:requestProperties', function()
+    local src = source
+    while not dbloaded do
+        Wait(100)
+    end
+    TriggerClientEvent('ps-housing:client:initialiseProperties', src, PropertiesTable)
 end)
 
 function RegisterProperty(propertyData, preventEnter, source)

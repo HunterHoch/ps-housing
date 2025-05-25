@@ -26,9 +26,13 @@ function InitialiseProperties(properties)
         ApartmentsTable[k] = Apartment:new(v)
     end
 
-	if not properties then
-    	properties = lib.callback.await('ps-housing:server:requestProperties')
-	end
+    if not properties then
+        properties = lib.callback.await('ps-housing:server:requestProperties')
+        if not properties then
+            TriggerServerEvent('ps-housing:server:requestProperties')
+            return -- wait for server to send them back
+        end
+    end
 	
     for k, v in pairs(properties) do
         createProperty(v.propertyData)

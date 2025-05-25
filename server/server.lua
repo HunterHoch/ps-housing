@@ -65,6 +65,14 @@ lib.callback.register("ps-housing:server:requestProperties", function()
     return PropertiesTable
 end)
 
+RegisterNetEvent('ps-housing:server:requestProperties', function()
+    local src = source
+    while not dbloaded do
+        Wait(100)
+    end
+    TriggerClientEvent('ps-housing:client:initialiseProperties', src, PropertiesTable)
+end)
+
 function RegisterProperty(propertyData, preventEnter, source)
     propertyData.owner = propertyData.owner or nil
     propertyData.has_access = propertyData.has_access or {}

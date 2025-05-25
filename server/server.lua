@@ -253,6 +253,15 @@ lib.callback.register("ps-housing:cb:inventoryHasItems", function(source, name, 
 
     return result[1].items ~= '[]'
 end)
+lib.callback.register("ps-housing:cb:playerHasItem", function(src, item)
+    if Config.Inventory == "ox" then
+        return exports.ox_inventory:Search(src, "count", item) > 0
+    else
+        local Player = QBCore.Functions.GetPlayer(src)
+        return Player and Player.Functions.GetItemByName(item) ~= nil
+    end
+end)
+
 
 AddEventHandler("ps-housing:server:updateProperty", function(type, property_id, data)
     local property = Property.Get(property_id)

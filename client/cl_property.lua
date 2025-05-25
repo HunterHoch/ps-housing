@@ -595,6 +595,8 @@ function Property:LoadFurniture(furniture)
         },
         rotation = furniture.rotation,
         type = furniture.type,
+        requiredItem = furniture.requiredItem,
+        metadata = furniture.metadata,
     }
 end
 
@@ -798,7 +800,9 @@ local function prepareFornitures(newFurnitures)
             object = newFurniture.object,
             position = newFurniture.position,
             rotation = newFurniture.rotation,
-            type = newFurniture.type
+            type = newFurniture.type,
+            requiredItem = newFurniture.requiredItem,
+            metadata = newFurniture.metadata
         }
     end
     return furnitures

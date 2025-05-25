@@ -31,7 +31,8 @@ function InitialiseProperties(properties)
 	end
 	
     for k, v in pairs(properties) do
-        createProperty(v.propertyData)
+        local data = v.propertyData or v
+        createProperty(data)
     end
 
     TriggerEvent("ps-housing:client:initialisedProperties")

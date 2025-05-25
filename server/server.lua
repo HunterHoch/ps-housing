@@ -1,7 +1,14 @@
-DoorResource = GetResourceState('ox_doorlock') == 'started' and 'ox' or GetResourceState('qb-doorlock') == 'started' and 'qb'
-if not DoorResource then 
-    return error('ox_doorlock/qb-doorlock must be started before ps-housing.') 
+DoorResource = nil
+local function waitForDoorlock()
+    DoorResource = GetResourceState('ox_doorlock') == 'started' and 'ox' or GetResourceState('qb-doorlock') == 'started' and 'qb'
+    while not DoorResource do
+        print('ps-housing waiting for ox_doorlock/qb-doorlock to start...')
+        Wait(500)
+        DoorResource = GetResourceState('ox_doorlock') == 'started' and 'ox' or GetResourceState('qb-doorlock') == 'started' and 'qb'
+    end
 end
+
+waitForDoorlock()
 
 QBCore = exports['qb-core']:GetCoreObject()
 -- PSCore = exports['ps-core']:GetCoreObject()
@@ -57,12 +64,20 @@ MySQL.ready(function()
     end)
 end)
 
+local function GetAllPropertyData()
+    local list = {}
+    for id, property in pairs(PropertiesTable) do
+        list[id] = property.propertyData
+    end
+    return list
+end
+
 lib.callback.register("ps-housing:server:requestProperties", function()
     while not dbloaded do
         Wait(100)
     end
 
-    return PropertiesTable
+    return GetAllPropertyData()
 end)
 
 function RegisterProperty(propertyData, preventEnter, source)
@@ -275,8 +290,8 @@ AddEventHandler("onResourceStart", function(resourceName) -- Used for when the r
         while not dbloaded do
             Wait(100)
         end
-        TriggerClientEvent('ps-housing:client:initialiseProperties', -1, PropertiesTable)
-	end 
+        TriggerClientEvent('ps-housing:client:initialiseProperties', -1, GetAllPropertyData())
+        end
 end)
 
 RegisterNetEvent("ps-housing:server:createNewApartment", function(aptLabel)
